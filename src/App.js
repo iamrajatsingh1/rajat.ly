@@ -21,35 +21,56 @@ export default class App extends Component {
       handleSubmit: this.handleSubmit,
       handleInputChange: this.handleInputChange,
       handleEnter: this.handleEnter,
+      giveShortidFromWindow: this.giveShortidFromWindow,
     };
   }
 
   componentDidMount = () => {
-    apiCall({
-      url: "http://localhost:8001/api/shortid/get",
-      method: "get",
-      crossDomain: true,
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => {
-        if (res.data.success) {
-          let responseData = res.data.data;
-          localStorage.setItem("data", JSON.stringify(responseData || []));
-          this.setState({
-            values: responseData || [],
-          });
-        } else {
+    let shortid = this.giveShortidFromWindow();
+    if (shortid !== "") {
+      apiCall({
+        url: `http://localhost:8001/${shortid}`,
+        method: "get",
+      })
+        .then()
+        .catch((e) => {
+          console.log(e);
+        });
+    } else {
+      apiCall({
+        url: "http://localhost:8001/api/shortid/get",
+        method: "get",
+        crossDomain: true,
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => {
+          if (res.data.success) {
+            let responseData = res.data.data;
+            localStorage.setItem("data", JSON.stringify(responseData || []));
+            this.setState({
+              values: responseData || [],
+            });
+          } else {
+            this.setState({
+              error: true,
+            });
+          }
+        })
+        .catch((e) => {
           this.setState({
             error: true,
           });
-        }
-      })
-      .catch((e) => {
-        this.setState({
-          error: true,
+          console.error(e);
         });
-        console.error(e);
-      });
+    }
+  };
+  giveShortidFromWindow = () => {
+    let shortid = window.location.pathname;
+
+    while (shortid.charAt(0) === "/") {
+      shortid = shortid.substring(1);
+    }
+    return shortid;
   };
   validateUrl = (string) => {
     let url;
