@@ -2,7 +2,8 @@
   "name": "rajat.ly",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://abhagsain.github.io/shortly/",
+  "homepage": "https://github.com/rajatsyngh/rajat.ly.git",
+  "github": "https://github.com/rajatsyngh/rajat.ly.git",
   "dependencies": {
     "axios": "^0.21.1",
     "jquery": "^3.6.0",
