@@ -22,12 +22,12 @@ export default class App extends Component {
       handleSubmit: this.handleSubmit,
       handleInputChange: this.handleInputChange,
       handleEnter: this.handleEnter,
-      giveShortidFromWindow: this.giveShortidFromWindow,
+      getShortidFromWindow: this.getShortidFromWindow,
     };
   }
 
   componentDidMount = () => {
-    let shortid = this.giveShortidFromWindow();
+    let shortid = this.getShortidFromWindow();
     if (shortid !== "") {
       apiCall({
         url: `http://localhost:8001/${shortid}`,
@@ -65,7 +65,7 @@ export default class App extends Component {
         });
     }
   };
-  giveShortidFromWindow = () => {
+  getShortidFromWindow = () => {
     let shortid = window.location.pathname;
 
     while (shortid.charAt(0) === "/") {
