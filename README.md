@@ -1,7 +1,9 @@
 # rajat.ly | URL Shotener
+
 Beautifully designed & completely responsive application which uses NodeJs Express backend to shorten the URLs
 
 ## Live Demo
+
 [Click here to see it live](#)
 
 ### Desktop
@@ -12,13 +14,16 @@ Beautifully designed & completely responsive application which uses NodeJs Expre
 
 ![shortly_mobile](https://user-images.githubusercontent.com/36589645/68426138-83d63b00-01cd-11ea-9dff-e220a29ec85d.gif)
 
-## Installation 
+## Installation
+
 ```
 git clone https://github.com/rajatsyngh/rajat.ly.git
 cd [foldername]
 npm install && npm run start
 ```
+
 Features
+
 - Shorten URL
 - Copy URL to clipboard in one click
 - Save shortened URL's

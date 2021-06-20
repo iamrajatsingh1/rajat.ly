@@ -10,6 +10,7 @@ import URLItem from "./components/URLItem";
 import GlobalContext from "./components/GlobalContext";
 import Loading from "./components/Loading";
 import { apiCall } from "./action/api-call-executer";
+import { isValidUrl } from "./utils/validater";
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -21,53 +22,62 @@ export default class App extends Component {
       handleSubmit: this.handleSubmit,
       handleInputChange: this.handleInputChange,
       handleEnter: this.handleEnter,
+      getShortidFromWindow: this.getShortidFromWindow,
     };
   }
 
   componentDidMount = () => {
-    apiCall({
-      url: "http://localhost:8001/api/shortid/get",
-      method: "get",
-      crossDomain: true,
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => {
-        if (res.data.success) {
-          let responseData = res.data.data;
-          localStorage.setItem("data", JSON.stringify(responseData || []));
-          this.setState({
-            values: responseData || [],
-          });
-        } else {
+    let shortid = this.getShortidFromWindow();
+    if (shortid !== "") {
+      apiCall({
+        url: `http://localhost:8001/${shortid}`,
+        method: "get",
+      })
+        .then()
+        .catch((e) => {
+          console.log(e);
+        });
+    } else {
+      apiCall({
+        url: "http://localhost:8001/api/shortid/get",
+        method: "get",
+        crossDomain: true,
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => {
+          if (res.data.success) {
+            let responseData = res.data.data;
+            localStorage.setItem("data", JSON.stringify(responseData || []));
+            this.setState({
+              values: responseData || [],
+            });
+          } else {
+            this.setState({
+              error: true,
+            });
+          }
+        })
+        .catch((e) => {
           this.setState({
             error: true,
           });
-        }
-      })
-      .catch((e) => {
-        this.setState({
-          error: true,
+          console.error(e);
         });
-        console.error(e);
-      });
-  };
-  validateUrl = (string) => {
-    let url;
-    try {
-      url = new URL(string);
-    } catch (_) {
-      return false;
     }
-    return (
-      url.protocol === "http:" ||
-      url.protocol === "https:" ||
-      url.protocol === "www:"
-    );
   };
+  getShortidFromWindow = () => {
+    let shortid = window.location.pathname;
+
+    while (shortid.charAt(0) === "/") {
+      shortid = shortid.substring(1);
+    }
+    return shortid;
+  };
+
   validateAndGetData = () => {
     const { input } = this.state;
     if (input) {
-      if (!this.validateUrl(input)) {
+      if (!isValidUrl(input)) {
         return this.setState({ error: true });
       } else {
         this.setState({ loading: true });
