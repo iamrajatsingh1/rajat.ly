@@ -10,6 +10,7 @@ import URLItem from "./components/URLItem";
 import GlobalContext from "./components/GlobalContext";
 import Loading from "./components/Loading";
 import { apiCall } from "./action/api-call-executer";
+import { isValidUrl } from "./utils/validater";
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -72,23 +73,11 @@ export default class App extends Component {
     }
     return shortid;
   };
-  validateUrl = (string) => {
-    let url;
-    try {
-      url = new URL(string);
-    } catch (_) {
-      return false;
-    }
-    return (
-      url.protocol === "http:" ||
-      url.protocol === "https:" ||
-      url.protocol === "www:"
-    );
-  };
+
   validateAndGetData = () => {
     const { input } = this.state;
     if (input) {
-      if (!this.validateUrl(input)) {
+      if (!isValidUrl(input)) {
         return this.setState({ error: true });
       } else {
         this.setState({ loading: true });
