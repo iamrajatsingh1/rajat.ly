@@ -110,7 +110,7 @@ export default class App extends Component {
     })
       .then((res) => {
         if (res.data.success) {
-          let shortid = res.data.data.shortid;
+          let shortid = res.data.data.record.short;
           const { values } = JSON.parse(JSON.stringify(this.state));
           const _id = this.getUniqueID();
           if (input.length >= 65) {
@@ -119,7 +119,7 @@ export default class App extends Component {
           values.push({
             _id,
             full: input,
-            short: `https://rajat-ly.herokuapp.com/${shortid}`,
+            short: shortid,
           });
           localStorage.setItem("data", JSON.stringify(values));
           this.setState({ values, input: "", loading: false });
