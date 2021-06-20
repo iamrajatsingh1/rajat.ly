@@ -19,6 +19,7 @@ export default class App extends Component {
       input: "",
       error: false,
       loading: false,
+      urlNotFound: false,
       handleSubmit: this.handleSubmit,
       handleInputChange: this.handleInputChange,
       handleEnter: this.handleEnter,
@@ -29,17 +30,29 @@ export default class App extends Component {
   componentDidMount = () => {
     let shortid = this.getShortidFromWindow();
     if (shortid !== "") {
+      console.log(shortid);
       apiCall({
         url: `http://localhost:8001/${shortid}`,
         method: "get",
       })
-        .then()
+        .then((res) => {
+          if (res.data.success) {
+            let fullUrl = res.data.data.full;
+            window.open(fullUrl, "_self");
+          } else {
+            this.setState({
+              urlNotFound: true,
+            });
+          }
+        })
         .catch((e) => {
-          console.log(e);
+          this.setState({
+            urlNotFound: true,
+          });
         });
     } else {
       apiCall({
-        url: "http://localhost:8001/api/shortid/get",
+        url: "https://rajat-ly.herokuapp.com/api/shortid/get",
         method: "get",
         crossDomain: true,
         headers: { "Content-Type": "application/json" },
@@ -90,7 +103,7 @@ export default class App extends Component {
   getShortenedURL = async () => {
     let { input } = this.state;
     apiCall({
-      url: "http://localhost:8001/api/shortid/add",
+      url: "https://rajat-ly.herokuapp.com/api/shortid/add",
       method: "post",
       headers: { "Content-Type": "application/json" },
       data: { full: input },
@@ -106,7 +119,7 @@ export default class App extends Component {
           values.push({
             _id,
             full: input,
-            short: `http://localhost:8001/${shortid}`,
+            short: `https://rajat-ly.herokuapp.com/${shortid}`,
           });
           localStorage.setItem("data", JSON.stringify(values));
           this.setState({ values, input: "", loading: false });
@@ -146,6 +159,19 @@ export default class App extends Component {
     return (
       <GlobalContext.Provider value={this.state}>
         <Navbar />
+        {this.state.urlNotFound ? (
+          <span
+            className="url__output"
+            style={{
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              color: "red",
+            }}
+          >
+            Url Not found
+          </span>
+        ) : null}
         <Hero />
         <div className="section-2">
           <Search />
