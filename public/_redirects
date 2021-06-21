@@ -1,0 +1,2 @@
+http://rajatly.netlify.app/* https://rajatly.netlify.app/:splat 301!
+/* /index.html 200
