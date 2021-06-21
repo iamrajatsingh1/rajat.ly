@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+// Styles
 import "./sass/index.scss";
+// Components
 import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
 import Search from "./components/Search";
@@ -9,7 +11,9 @@ import Specifications from "./components/Specifications";
 import URLItem from "./components/URLItem";
 import GlobalContext from "./components/GlobalContext";
 import Loading from "./components/Loading";
+// Actions
 import { apiCall } from "./action/api-call-executer";
+// Helpers
 import { isValidUrl } from "./utils/validater";
 export default class App extends Component {
   constructor(props) {
@@ -18,6 +22,7 @@ export default class App extends Component {
       values: [],
       input: "",
       error: false,
+      postError: false,
       loading: false,
       urlNotFound: false,
       handleSubmit: this.handleSubmit,
@@ -30,9 +35,8 @@ export default class App extends Component {
   componentDidMount = () => {
     let shortid = this.getShortidFromWindow();
     if (shortid !== "") {
-      console.log(shortid);
       apiCall({
-        url: `http://localhost:8001/${shortid}`,
+        url: `https://rajat-ly.herokuapp.com/${shortid}`,
         method: "get",
       })
         .then((res) => {
@@ -77,6 +81,9 @@ export default class App extends Component {
           console.error(e);
         });
     }
+  };
+  componentWillUnmount = () => {
+    localStorage.removeItem("data");
   };
   getShortidFromWindow = () => {
     let shortid = window.location.pathname;
@@ -126,14 +133,14 @@ export default class App extends Component {
         } else {
           this.setState({
             loading: false,
-            error: true,
+            postError: true,
           });
         }
       })
       .catch((e) => {
         this.setState({
           loading: false,
-          error: true,
+          postError: true,
         });
       });
   };
@@ -154,12 +161,12 @@ export default class App extends Component {
     return "_" + Math.random().toString(36).substr(2, 9);
   };
   render() {
-    const { values, loading } = this.state;
+    const { values, loading, urlNotFound } = this.state;
 
     return (
       <GlobalContext.Provider value={this.state}>
         <Navbar />
-        {this.state.urlNotFound ? (
+        {urlNotFound ? (
           <span
             className="url__output"
             style={{

@@ -4,7 +4,7 @@ export default class Search extends Component {
   static contextType = GlobalContext;
 
   render() {
-    const { handleSubmit, error, input } = this.context;
+    const { handleSubmit, error, input, postError } = this.context;
     const cName = error
       ? "search__input search__input--error"
       : "search__input";
@@ -16,13 +16,13 @@ export default class Search extends Component {
               type="text"
               className={cName}
               value={input}
-              onChange={e =>
+              onChange={(e) =>
                 this.context.handleInputChange({
                   input: e.target.value,
                   error: false,
                 })
               }
-              onKeyPress={e => this.context.handleEnter(e)}
+              onKeyPress={(e) => this.context.handleEnter(e)}
               placeholder="Shorten a link here"
             />
 
@@ -31,6 +31,11 @@ export default class Search extends Component {
                 Please add a valid link
               </span>
             )}
+            {postError ? (
+              <span className="search__error-text--mobile">
+                Could not shorten it, try again.
+              </span>
+            ) : null}
             <button className="search__button" onClick={() => handleSubmit()}>
               Shorten it!
             </button>
