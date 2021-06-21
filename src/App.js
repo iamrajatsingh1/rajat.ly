@@ -21,10 +21,11 @@ export default class App extends Component {
     this.state = {
       values: [],
       input: "",
-      error: false,
-      postError: false,
       loading: false,
+      error: false,
       urlNotFound: false,
+      postError: false,
+      getDataError: false,
       handleSubmit: this.handleSubmit,
       handleInputChange: this.handleInputChange,
       handleEnter: this.handleEnter,
@@ -70,15 +71,14 @@ export default class App extends Component {
             });
           } else {
             this.setState({
-              error: true,
+              getDataError: true,
             });
           }
         })
         .catch((e) => {
           this.setState({
-            error: true,
+            getDataError: true,
           });
-          console.error(e);
         });
     }
   };
@@ -161,7 +161,7 @@ export default class App extends Component {
     return "_" + Math.random().toString(36).substr(2, 9);
   };
   render() {
-    const { values, loading, urlNotFound } = this.state;
+    const { values, loading, urlNotFound, getDataError } = this.state;
 
     return (
       <GlobalContext.Provider value={this.state}>
@@ -177,6 +177,19 @@ export default class App extends Component {
             }}
           >
             Url Not found
+          </span>
+        ) : null}
+        {getDataError ? (
+          <span
+            className="url__output"
+            style={{
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              color: "red",
+            }}
+          >
+            Could not fetch data. Please try later.
           </span>
         ) : null}
         <Hero />
